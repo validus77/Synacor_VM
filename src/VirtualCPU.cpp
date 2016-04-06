@@ -107,7 +107,7 @@ std::int32_t VirtualCPU::halt() {
 
 std::int32_t VirtualCPU::set(std::uint16_t a, std::uint16_t b) {
   if(trace_flag) {
-    std::cout << "OP_SET " << memoryController_.decodeValue(a)<<"  " << memoryController_.decodeValue(b) << std::endl;
+    std::cout << "OP_SET " << memoryController_.decodeValue(a) << "  " << memoryController_.decodeValue(b) << std::endl;
   }
   memoryController_.accessAtAddress(a) = memoryController_.readValue(b);
     return 3;
@@ -269,7 +269,7 @@ std::int32_t VirtualCPU::ret() {
 }
 
 std::int32_t VirtualCPU::out(std::uint16_t a) {
-    std::cout << (char) a;
+    std::cout << static_cast<char>(memoryController_.readValue(a));
     return 2;
 }
 
