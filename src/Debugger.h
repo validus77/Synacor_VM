@@ -33,6 +33,10 @@ class Debugger {
   void printRegisters();
   void continueExec();
   void printHelp();
+  void setRegester(std::uint16_t id, std::uint16_t value);
+  void setMemeory(std::uint16_t address, std::uint16_t value);
+
+  std::vector<std::string> split(const std::string &s, char delim);
 
   bool in_trace_;
 
