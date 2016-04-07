@@ -16,7 +16,7 @@
 class Disassembler {
 public:
     Disassembler(MemoryController& memoryController);
-    void printProgramStartingAt(std::uint16_t astart_ddress, std::uint16_t end_address);
+    void printProgramStartingAt(std::uint16_t start_address, std::uint16_t end_address);
 private:
     // List of instructions
     std::int32_t halt();

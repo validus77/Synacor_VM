@@ -5,22 +5,14 @@
 #include "VirtualCPU.h"
 
 VirtualCPU::VirtualCPU(MemoryController& memoryController, std::stack<uint16_t>& stack) :
-memoryController_(memoryController), stack_(stack) {
-      trace_flag = false;
-      brake_point = 50000;
+memoryController_(memoryController), stack_(stack) , debugger_(memoryController){
+      debugger_.setBreakPoint(0);
 
 
 }
 
 std::uint16_t VirtualCPU::executeInstructionAtAddress(std::uint16_t address) {
-  if(address == brake_point) {
-    trace_flag = true;
-  }
-
-  if(trace_flag) {
-    fgetc(stdin);
-    std::cout << "DEBUG: PC-> " << address << " | ";
-  }
+  debugger_.pc_  = address; //HACK FOR NOW
     switch (memoryController_.readAtAddress(address)) {
         case 0:
             return address + halt();
@@ -97,8 +89,9 @@ std::uint16_t VirtualCPU::executeInstructionAtAddress(std::uint16_t address) {
 
 // OP CODES
 std::int32_t VirtualCPU::halt() {
-    if(trace_flag) {
-      std::cout << "OP_HALT" << std::endl;
+    if(debugger_.shouldBrake(0)) {
+      std::cout << "HALT" << std::endl;
+      debugger_.debugConsole(0);
     }
 
     std::cout << "--CPU HALT--" << std::endl;
@@ -106,23 +99,26 @@ std::int32_t VirtualCPU::halt() {
 }
 
 std::int32_t VirtualCPU::set(std::uint16_t a, std::uint16_t b) {
-  if(trace_flag) {
-    std::cout << "OP_SET " << memoryController_.decodeValue(a) << "  " << memoryController_.decodeValue(b) << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "SET " << memoryController_.decodeValue(a) << "  " << memoryController_.decodeValue(b) << std::endl;
+    debugger_.debugConsole(0);
   }
   memoryController_.accessAtAddress(a) = memoryController_.readValue(b);
     return 3;
 }
 
 std::int32_t VirtualCPU::push(std::uint16_t a) {
-  if(trace_flag) {
-    std::cout << "OP_PUSH " << memoryController_.decodeValue(a) << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "PUSH " << memoryController_.decodeValue(a) << std::endl;
+    debugger_.debugConsole(0);
   }
     stack_.push(memoryController_.readValue(a));
     return 2;
 }
 std::int32_t VirtualCPU::pop(std::uint16_t a) {
-  if(trace_flag) {
-    std::cout << "OP_POP " << memoryController_.decodeValue(a) << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "POP " << memoryController_.decodeValue(a) << std::endl;
+    debugger_.debugConsole(0);
   }
 
   if(!stack_.empty()) {
@@ -134,9 +130,10 @@ std::int32_t VirtualCPU::pop(std::uint16_t a) {
     return 2;
 }
 std::int32_t VirtualCPU::eq(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-  if(trace_flag) {
-    std::cout << "OP_EQ " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "EQ " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
         "  " << memoryController_.decodeValue(c) << std::endl;
+    debugger_.debugConsole(0);
   }
     if(memoryController_.readValue(b) == memoryController_.readValue(c)) {
       memoryController_.accessAtAddress(a) = 1;
@@ -146,9 +143,10 @@ std::int32_t VirtualCPU::eq(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
     return 4;
 }
 std::int32_t VirtualCPU::gt(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-  if(trace_flag) {
-    std::cout << "OP_GT " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "GT " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
         "  " << memoryController_.decodeValue(c) << std::endl;
+    debugger_.debugConsole(0);
   }
     if(memoryController_.readValue(b) > memoryController_.readValue(c)) {
       memoryController_.accessAtAddress(a) = 1;
@@ -158,14 +156,16 @@ std::int32_t VirtualCPU::gt(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
     return 4;
 }
 std::int32_t VirtualCPU::jump(std::uint16_t a, std::uint16_t adr) {
-  if(trace_flag) {
-    std::cout << "OP_JMP " << memoryController_.decodeValue(a) << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "JMP " << memoryController_.decodeValue(a) << std::endl;
+    debugger_.debugConsole(0);
   }
     return memoryController_.readValue(a);
 }
 std::int32_t VirtualCPU::jt(std::uint16_t a, std::uint16_t b, std::uint16_t adr) {
-  if(trace_flag) {
-    std::cout << "OP_JT " << memoryController_.decodeValue(a) << " " << memoryController_.decodeValue(b) << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "JT " << memoryController_.decodeValue(a) << " " << memoryController_.decodeValue(b) << std::endl;
+    debugger_.debugConsole(0);
   }
     if(memoryController_.readValue(a) != 0) {
         return memoryController_.readValue(b);
@@ -173,8 +173,9 @@ std::int32_t VirtualCPU::jt(std::uint16_t a, std::uint16_t b, std::uint16_t adr)
     return adr + 3;
 }
 std::int32_t VirtualCPU::jf(std::uint16_t a, std::uint16_t b, std::uint16_t adr) {
-  if(trace_flag) {
-    std::cout << "OP_JF " << memoryController_.decodeValue(a) << " " << memoryController_.decodeValue(b) << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "JF " << memoryController_.decodeValue(a) << " " << memoryController_.decodeValue(b) << std::endl;
+    debugger_.debugConsole(0);
   }
 
     if(memoryController_.readValue(a) == 0) {
@@ -183,81 +184,91 @@ std::int32_t VirtualCPU::jf(std::uint16_t a, std::uint16_t b, std::uint16_t adr)
     return adr + 3;
 }
 std::int32_t VirtualCPU::add(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-  if(trace_flag) {
-    std::cout << "OP_ADD " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "ADD " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
         "  " << memoryController_.decodeValue(c) << std::endl;
+    debugger_.debugConsole(0);
   }
   memoryController_.accessAtAddress(a) = (memoryController_.readValue(b) + memoryController_.readValue(c)) % 32768;
     return 4;
 }
 std::int32_t VirtualCPU::mult(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-  if(trace_flag) {
-    std::cout << "OP_MULT " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "MULT " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
         "  " << memoryController_.decodeValue(c) << std::endl;
+    debugger_.debugConsole(0);
   }
   memoryController_.accessAtAddress(a) = (memoryController_.readValue(b) * memoryController_.readValue(c)) % 32768;
     return 4;
 }
 std::int32_t VirtualCPU::mod(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-  if(trace_flag) {
-    std::cout << "OP_MOD " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "MOD " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
         "  " << memoryController_.decodeValue(c) << std::endl;
+    debugger_.debugConsole(0);
   }
 
   memoryController_.accessAtAddress(a) = (memoryController_.readValue(b) % memoryController_.readValue(c));
     return 4;
 }
 std::int32_t VirtualCPU::and_i(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-  if(trace_flag) {
-    std::cout << "OP_AND " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "AND " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
         "  " << memoryController_.decodeValue(c) << std::endl;
+    debugger_.debugConsole(0);
   }
   memoryController_.accessAtAddress(a) = (memoryController_.readValue(b) & memoryController_.readValue(c));
     return 4;
 }
 std::int32_t VirtualCPU::or_i(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-  if(trace_flag) {
-    std::cout << "OP_OR " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "OR " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) <<
         "  " << memoryController_.decodeValue(c) << std::endl;
+    debugger_.debugConsole(0);
   }
 
   memoryController_.accessAtAddress(a) = (memoryController_.readValue(b) | memoryController_.readValue(c));
     return 4;
 }
 std::int32_t VirtualCPU::not_i(std::uint16_t a, std::uint16_t b) {
-  if(trace_flag) {
-    std::cout << "OP_NOT " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "NOT " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeValue(b) << std::endl;
+    debugger_.debugConsole(0);
   }
   memoryController_.accessAtAddress(a) = (~memoryController_.readValue(b))  & ((1 << 15) - 1);
     return 3;
 }
 std::int32_t VirtualCPU::rmem(std::uint16_t a, std::uint16_t b) {
-  if(trace_flag) {
+  if(debugger_.shouldBrake(0)) {
     std::uint16_t val = memoryController_.readValue(b);
-    std::cout << "OP_RMEM " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeMemory(val) << std::endl;
+    std::cout << "RMEM " << memoryController_.decodeValue(a)<< "  " << memoryController_.decodeMemory(val) << std::endl;
+    debugger_.debugConsole(0);
   }
 
   memoryController_.accessAtAddress(a) = memoryController_.readAtAddress(memoryController_.readValue(b));
     return 3;
 }
 std::int32_t VirtualCPU::wmem(std::uint16_t a, std::uint16_t b) {
-  if(trace_flag) {
+  if(debugger_.shouldBrake(0)) {
     std::uint16_t val = memoryController_.readValue(a);
-    std::cout << "OP_WMEM " << memoryController_.decodeMemory(val)<< "  " << memoryController_.decodeValue(b) << std::endl;
+    std::cout << "WMEM " << memoryController_.decodeMemory(val)<< "  " << memoryController_.decodeValue(b) << std::endl;
+    debugger_.debugConsole(0);
   }
   memoryController_.accessAtAddress(memoryController_.readValue(a)) = memoryController_.readValue(b);
   return 3;
 }
 std::int32_t VirtualCPU::call(std::uint16_t a, std::uint16_t adr) {
-  if(trace_flag) {
-    std::cout << "OP_CALL " << memoryController_.decodeValue(a) << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "CALL " << memoryController_.decodeValue(a) << std::endl;
+    debugger_.debugConsole(0);
   }
     stack_.push(adr + 2);
     return memoryController_.readValue(a);
 }
 std::int32_t VirtualCPU::ret() {
-  if(trace_flag) {
-    std::cout << "OP_RET " << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "RET " << std::endl;
+    debugger_.debugConsole(0);
   }
 
   if(stack_.empty()) {
@@ -281,8 +292,9 @@ std::int32_t VirtualCPU::in(std::uint16_t a) {
     return 2;
 }
 std::int32_t VirtualCPU::noop() {
-  if(trace_flag) {
-    std::cout << "OP_NOOP " << std::endl;
+  if(debugger_.shouldBrake(0)) {
+    std::cout << "NOOP " << std::endl;
+    debugger_.debugConsole(0);
   }
     return 1;
 }

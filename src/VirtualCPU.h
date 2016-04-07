@@ -13,13 +13,12 @@
 #include <stack>
 
 #include "MemoryController.h"
+#include "Debugger.h"
 
 class VirtualCPU {
 public:
     VirtualCPU(MemoryController& memoryController, std::stack<std::uint16_t>& stack);
     std::uint16_t executeInstructionAtAddress(std::uint16_t address);
-    bool trace_flag;
-    std::uint32_t brake_point;
 private:
 
     // List of instructions
@@ -50,5 +49,7 @@ private:
 
     MemoryController& memoryController_;
     std::stack<std::uint16_t>& stack_;
+
+    Debugger debugger_;
 
 };

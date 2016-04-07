@@ -133,101 +133,101 @@ void Disassembler::printProgramStartingAt(std::uint16_t start_address, std::uint
 
 // OP CODES
 std::int32_t Disassembler::halt() {
-        std::cout << "OP_HALT" << std::endl;
+        std::cout << "HALT" << std::endl;
     return 1;
 }
 
 std::int32_t Disassembler::set(std::uint16_t a, std::uint16_t b) {
-    std::cout << "OP_SET " << printValue(a)<<"  " << printValue(b) << std::endl;
+    std::cout << "SET " << printValue(a)<<"  " << printValue(b) << std::endl;
     return 3;
 }
 
 std::int32_t Disassembler::push(std::uint16_t a) {
-    std::cout << "OP_PUSH " << printValue(a) << std::endl;
+    std::cout << "PUSH " << printValue(a) << std::endl;
     return 2;
 }
 std::int32_t Disassembler::pop(std::uint16_t a) {
-    std::cout << "OP_POP " << printValue(a) << std::endl;
+    std::cout << "POP " << printValue(a) << std::endl;
     return 2;
 }
 std::int32_t Disassembler::eq(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-    std::cout << "OP_EQ " << printValue(a)<< "  " << printValue(b) <<
+    std::cout << "EQ " << printValue(a)<< "  " << printValue(b) <<
         "  " << printValue(c) << std::endl;
     return 4;
 }
 std::int32_t Disassembler::gt(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-    std::cout << "OP_GT " << printValue(a)<< "  " << printValue(b) <<
+    std::cout << "GT " << printValue(a)<< "  " << printValue(b) <<
         "  " << printValue(c) << std::endl;
     return 4;
 }
 std::int32_t Disassembler::jump(std::uint16_t a) {
-    std::cout << "OP_JMP " << printValue(a) << std::endl;
+    std::cout << "JMP " << printValue(a) << std::endl;
     return 2;
 }
 std::int32_t Disassembler::jt(std::uint16_t a, std::uint16_t b) {
-    std::cout << "OP_JT " << printValue(a) << " " << printValue(b) << std::endl;
+    std::cout << "JT " << printValue(a) << " " << printValue(b) << std::endl;
     return 3;
 }
 std::int32_t Disassembler::jf(std::uint16_t a, std::uint16_t b) {
-    std::cout << "OP_JF " << printValue(a) << " " << printValue(b) << std::endl;
+    std::cout << "JF " << printValue(a) << " " << printValue(b) << std::endl;
     return  3;
 }
 std::int32_t Disassembler::add(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-    std::cout << "OP_ADD " << printValue(a)<< "  " << printValue(b) <<
+    std::cout << "ADD " << printValue(a)<< "  " << printValue(b) <<
         "  " << printValue(c) << std::endl;
     return 4;
 }
 std::int32_t Disassembler::mult(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-    std::cout << "OP_MULT " << printValue(a)<< "  " << printValue(b) <<
+    std::cout << "MULT " << printValue(a)<< "  " << printValue(b) <<
         "  " << printValue(c) << std::endl;
     return 4;
 }
 std::int32_t Disassembler::mod(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-    std::cout << "OP_MOD " << printValue(a)<< "  " << printValue(b) <<
+    std::cout << "MOD " << printValue(a)<< "  " << printValue(b) <<
         "  " << printValue(c) << std::endl;
     return 4;
 }
 std::int32_t Disassembler::and_i(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-    std::cout << "OP_AND " << printValue(a)<< "  " << printValue(b) <<
+    std::cout << "AND " << printValue(a)<< "  " << printValue(b) <<
         "  " << printValue(c) << std::endl;
     return 4;
 }
 std::int32_t Disassembler::or_i(std::uint16_t a, std::uint16_t b, std::uint16_t c) {
-        std::cout << "OP_OR " << printValue(a)<< "  " << printValue(b) <<
+        std::cout << "OR " << printValue(a)<< "  " << printValue(b) <<
         "  " << printValue(c) << std::endl;
     return 4;
 }
 std::int32_t Disassembler::not_i(std::uint16_t a, std::uint16_t b) {
-    std::cout << "OP_NOT " << printValue(a)<< "  " << printValue(b) << std::endl;
+    std::cout << "NOT " << printValue(a)<< "  " << printValue(b) << std::endl;
     return 3;
 }
 std::int32_t Disassembler::rmem(std::uint16_t a, std::uint16_t b) {
-    std::cout << "OP_RMEM " << printValue(a)<< "  [" << printValue(b) << "]" << std::endl;
+    std::cout << "RMEM " << printValue(a)<< "  [" << printValue(b) << "]" << std::endl;
     return 3;
 }
 std::int32_t Disassembler::wmem(std::uint16_t a, std::uint16_t b) {
-    std::cout << "OP_WMEM " << "["<< printValue(a) << "]  " << printValue(b) << std::endl;
+    std::cout << "WMEM " << "["<< printValue(a) << "]  " << printValue(b) << std::endl;
     return 3;
 }
 std::int32_t Disassembler::call(std::uint16_t a) {
-    std::cout << "OP_CALL " << printValue(a) << std::endl;
+    std::cout << "CALL " << printValue(a) << std::endl;
     return 2;
 }
 std::int32_t Disassembler::ret() {
-    std::cout << "OP_RET " << std::endl;
+    std::cout << "RET " << std::endl;
     return 1;
 }
 
 std::int32_t Disassembler::out(std::uint16_t a) {
-    std::cout << "OP_OUT " <<  printValue(a) <<  " # " << printCharValue(a) << std::endl;
+    std::cout << "OUT " <<  printValue(a) <<  " # " << printCharValue(a) << std::endl;
     return 2;
 }
 
 std::int32_t Disassembler::in(std::uint16_t a) {
-    std::cout << "OP_IN " <<  printValue(a) << std::endl;
+    std::cout << "IN " <<  printValue(a) << std::endl;
     return 2;
 }
 std::int32_t Disassembler::noop() {
-    std::cout << "OP_NOOP " << std::endl;
+    std::cout << "NOOP " << std::endl;
     return 1;
 }
