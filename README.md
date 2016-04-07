@@ -11,16 +11,28 @@ This would mean add the contents of register 1 to 100 and store it in register 0
 
 - Debugger console: when the debugger hits a brake point it will brake to a debugger console, here the current instruction about to be executed it printed and you are given a prompt that can take the following commands. 
 Debugger commands:
+    
     c - continue execution
+
     pr - print registers
+    
     pm [mem_addr] - print memory address
+    
     ps - print the stack 
+    
     disa [mem_addr] - disassemble code starting at addr
+    
     br [mem_addr] - set breakpoint
+    
     cbr [mem_addr] - clear breakpoint
+    
     setr [regester] [value] - set a register value
-    setm [mem_addr] [value] - set a register value
+    
+    setm [mem_addr] [value] - set a value in memeory
+    
     push [value] - push a value on to the stack
+    
     pop - pop a value from the stack
+    
     s - step to next instruction
 
