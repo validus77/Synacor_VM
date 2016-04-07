@@ -26,3 +26,9 @@
 *.exe
 *.out
 *.app
+
+# OS X files
+.DS_Store
+
+#Clion
+.idea
