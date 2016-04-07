@@ -5,7 +5,7 @@
 #include "VirtualCPU.h"
 
 VirtualCPU::VirtualCPU(MemoryController& memoryController, std::stack<uint16_t>& stack) :
-memoryController_(memoryController), stack_(stack) , debugger_(memoryController){
+memoryController_(memoryController), stack_(stack) , debugger_(memoryController, stack){
       debugger_.setBreakPoint(0);
 
 

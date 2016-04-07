@@ -12,13 +12,14 @@
 #include <sys/types.h>
 #include <stack>
 #include <set>
+#include <vector>
 
 #include "MemoryController.h"
 #include "Disassembler.h"
 
 class Debugger {
  public:
-  Debugger(MemoryController& memoryController);
+  Debugger(MemoryController& memoryController, std::stack<std::uint16_t>& stack);
 
   bool shouldBrake(std::uint16_t address);
   void debugConsole(std::uint16_t address);
@@ -29,7 +30,7 @@ class Debugger {
  private:
   void printMemory(std::uint16_t address);
   void printCodeBlockAt(std::uint16_t address);
-  void printCodeAt(std::uint16_t address);
+  void printStack(std::stack<std::uint16_t> &s);
   void printRegisters();
   void continueExec();
   void printHelp();
@@ -42,5 +43,6 @@ class Debugger {
 
   std::set<std::uint16_t> break_points_;
   MemoryController& memoryController_;
+  std::stack<std::uint16_t>& stack_;
   Disassembler disassembler_;
 };

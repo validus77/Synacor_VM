@@ -3,11 +3,14 @@
 //
 
 #include <sstream>
+#include <vector>
 #include "Debugger.h"
-Debugger::Debugger(MemoryController& memoryController) :
+
+Debugger::Debugger(MemoryController& memoryController, std::stack<std::uint16_t>& stack) :
     in_trace_(false),
     memoryController_(memoryController),
-    disassembler_(memoryController){
+    disassembler_(memoryController),
+    stack_(stack){
 
 }
 
@@ -28,6 +31,9 @@ void Debugger::debugConsole(std::uint16_t address) {
   } else if (command_list.front() == "pm") {
     uint16_t addr = (command_list.size() == 2)? atoi(command_list[1].c_str()) : pc_;
     printMemory(addr);
+  } else if (command_list.front() == "ps") {
+      std::cout << "--Stack--" << std::endl;
+      printStack(stack_);
   } else if (command_list.front() == "disa") {
     uint16_t addr = (command_list.size() == 2)? atoi(command_list[1].c_str()) : pc_;
     printCodeBlockAt(addr);
@@ -41,6 +47,10 @@ void Debugger::debugConsole(std::uint16_t address) {
     setRegester(atoi(command_list[1].c_str()), atoi(command_list[2].c_str()));
   } else if(command_list.front() == "setm") {
     setMemeory(atoi(command_list[1].c_str()), atoi(command_list[2].c_str()));
+  } else if(command_list.front() == "push") {
+      stack_.push(atoi(command_list[1].c_str()));
+  } else if(command_list.front() == "pop") {
+      stack_.pop();
   } else if (command_list.front() == "s") {
     return;
   } else {
@@ -77,10 +87,6 @@ void Debugger::printCodeBlockAt(std::uint16_t address) {
   disassembler_.printProgramStartingAt(pc_, pc_ + 10);
 }
 
-void Debugger::printCodeAt(std::uint16_t address) {
-  disassembler_.printProgramStartingAt(pc_, pc_ + 1);
-}
-
 void Debugger::printMemory(std::uint16_t address) {
   std::cout << pc_ << ": " << memoryController_.readAtAddress(pc_) << std::endl;
 }
@@ -109,11 +115,14 @@ void Debugger::printHelp() {
       << "    c - continue execution" << std::endl
       << "    pr - print regesters" << std::endl
       << "    pm [mem_addr] - print memeory adress" << std::endl
+      << "    ps - print the stack " << std::endl
       << "    disa [mem_addr] - dissasemble code starting at addr" << std::endl
       << "    br [mem_addr] - set breakpoint" << std::endl
       << "    cbr [mem_addr] - clear breakpoint" << std::endl
       << "    setr [regester] [value] - set a regester value" << std::endl
       << "    setm [mem_addr] [value] - set a regester value" << std::endl
+      << "    push [value] - push a value on to the stack" << std::endl
+      << "    pop - pop a value from the stack" << std::endl
       << "    s - step to next instruction" << std::endl;
 }
 
@@ -125,4 +134,16 @@ std::vector<std::string> Debugger::split(const std::string &s, char delim) {
     tokens.push_back(item);
   }
   return tokens;
+}
+void Debugger::printStack(std::stack<std::uint16_t> &s) {
+    if(s.empty())
+    {
+        std::cout << std::endl;
+        return;
+    }
+    std::uint16_t x= s.top();
+    s.pop();
+    printStack(s);
+    s.push(x);
+    std::cout << x << std::endl;
 }
