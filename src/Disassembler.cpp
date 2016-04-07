@@ -21,7 +21,10 @@ std::string Disassembler::printValue(std::uint16_t value) {
 std::string Disassembler::printCharValue(std::uint16_t value) {
     std::stringstream ss;
     if(value <= 32767) {
-        ss << static_cast<char>(value);
+        if(value == 10)
+            ss << "\\n";
+        else
+            ss << static_cast<char>(value);
     } else {
         ss <<"";
     }
@@ -199,11 +202,11 @@ std::int32_t Disassembler::not_i(std::uint16_t a, std::uint16_t b) {
     return 3;
 }
 std::int32_t Disassembler::rmem(std::uint16_t a, std::uint16_t b) {
-    std::cout << "OP_RMEM " << printValue(a)<< "  " << printValue(b) << std::endl;
+    std::cout << "OP_RMEM " << printValue(a)<< "  [" << printValue(b) << "]" << std::endl;
     return 3;
 }
 std::int32_t Disassembler::wmem(std::uint16_t a, std::uint16_t b) {
-    std::cout << "OP_WMEM " << printValue(b) << "  " << printValue(a) << std::endl;
+    std::cout << "OP_WMEM " << "["<< printValue(a) << "]  " << printValue(b) << std::endl;
     return 3;
 }
 std::int32_t Disassembler::call(std::uint16_t a) {
@@ -216,7 +219,7 @@ std::int32_t Disassembler::ret() {
 }
 
 std::int32_t Disassembler::out(std::uint16_t a) {
-    std::cout << "OP_OUT " <<  printValue(a) <<  " [" << printCharValue(a) << "]" << std::endl;
+    std::cout << "OP_OUT " <<  printValue(a) <<  " # " << printCharValue(a) << std::endl;
     return 2;
 }
 
