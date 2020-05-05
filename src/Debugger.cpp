@@ -104,7 +104,7 @@ void Debugger::setRegester(std::uint16_t id, std::uint16_t value) {
 }
 
 void Debugger::setMemeory(std::uint16_t address, std::uint16_t value) {
-  if(address > 8) {
+  if(address > 32767) {
     std::cout << "Error [" << address << "] is invalid" << std::endl;
     return;
   }
@@ -120,7 +120,7 @@ void Debugger::printHelp() {
       << "    br [mem_addr] - set breakpoint" << std::endl
       << "    cbr [mem_addr] - clear breakpoint" << std::endl
       << "    setr [regester] [value] - set a regester value" << std::endl
-      << "    setm [mem_addr] [value] - set a regester value" << std::endl
+      << "    setm [mem_addr] [value] - set a memory value" << std::endl
       << "    push [value] - push a value on to the stack" << std::endl
       << "    pop - pop a value from the stack" << std::endl
       << "    s - step to next instruction" << std::endl;
